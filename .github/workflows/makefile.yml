@@ -1,0 +1,43 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup pages
+      id: pages
+      uses: actions/configure-pages@v3
+    - name: Build
+      run: make all docs
+    - name: Upload exe artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: executable
+        path: streamer
+    - name: Upload docs artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: doc/html/
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy
+      id: deployment
+      uses: actions/deploy-pages@v2
