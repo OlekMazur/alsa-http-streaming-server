@@ -20,7 +20,7 @@ jobs:
       id: pages
       uses: actions/configure-pages@v3
     - name: Install system packages
-      run: sudo apt-get install -y libasound2-dev doxygen
+      run: sudo apt-get install -y libasound2-dev doxygen graphviz
     - name: Build
       run: make all docs
     - name: Upload exe artifact
